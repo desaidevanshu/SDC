@@ -1,0 +1,226 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial", sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+}
+
+/* Home Container */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.navbar-home {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.navbar-left .navbar-logo {
+  height: 50px;
+}
+
+
+.navbar-center {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-center .nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.navbar-center .nav-link:hover {
+  background-color: #f8f8f8;
+  color: #8d0000;
+}
+
+.navbar-center .logout-btn {
+  background-color: #8d0000;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.navbar-center .logout-btn:hover {
+  background-color: #b30000;
+}
+
+
+.navbar-user-home {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 14px;
+}
+
+.user-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.user-role {
+  color: #666;
+}
+
+
+@media (max-width: 768px) {
+  .navbar-home {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .navbar-center {
+    margin-top: 10px;
+  }
+
+  .navbar-user-home {
+    align-items: center;
+    margin-top: 5px;
+  }
+}
+
+/* Sidebar and Main Content Container */
+.container {
+  display: flex;
+  height: 100%;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 260px;
+  background-color: #3b3b3b;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+}
+
+.sidebar .applicant-portal {
+  background: #d9d9d9;
+  color: black;
+  padding: 15px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.sidebar li:hover {
+  background-color: #575757;
+}
+
+/* Main Content Styles */
+.content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: white;
+  text-align: center;
+}
+
+/* Application Forms Section */
+.application-forms h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+}
+
+.form-card {
+  background: #d9d9d9;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.fill-form-btn {
+  background-color: #8d0000;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.fill-form-btn:hover {
+  background-color: #b30000;
+}
+
+/* Footer Chat Button */
+.chat-support {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+.chat-support img {
+  width: 50px;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    text-align: center;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
