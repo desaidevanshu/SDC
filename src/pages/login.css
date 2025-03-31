@@ -33,6 +33,11 @@ body {
   height: 109px;
 }
 
+.navbar-logo1{
+  width: 140px;
+  height: 100px;
+  
+}
 .navbar-title {
   font-size: 24px;
   font-weight: 600;

@@ -1,11 +1,4 @@
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Arial", sans-serif;
-}
-
 body {
   background-color: #f4f4f4;
 }
@@ -18,22 +11,26 @@ body {
 }
 
 .navbar-home {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  padding: 15px 20px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
   width: 100%;
-  z-index: 100;
+  height: 100px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
 }
 
 .navbar-left .navbar-logo {
-  height: 50px;
-}
+  width: 200px;
+  height: 109px;
 
+}
 
 .navbar-center {
   display: flex;
@@ -70,7 +67,7 @@ body {
 .navbar-user-home {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+ 
   font-size: 14px;
 }
 
@@ -101,67 +98,107 @@ body {
   }
 }
 
-/* Sidebar and Main Content Container */
-.container {
-  display: flex;
-  height: 100%;
-}
 
-/* Sidebar Styles */
+/* Sidebar */
 .sidebar {
-  width: 260px;
-  background-color: #3b3b3b;
-  color: white;
-  padding: 20px;
-  height: 100vh;
+  position: fixed;
+  top:100px;
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  border-right: 2px solid #ccc;
 }
 
-.sidebar .applicant-portal {
-  background: #d9d9d9;
-  color: black;
-  padding: 15px;
-  font-weight: bold;
+.logo-container {
   text-align: center;
-  border-radius: 10px;
   margin-bottom: 20px;
+  margin-top:10px;
 }
 
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
+.logo-box {
+  background-color: #ddd;
+  padding: 15px;
+  border-radius: 8px;
 }
 
-.sidebar li {
-  padding: 12px;
+.logo-box h2 {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.logo-box p {
+  font-size: 12px;
+  color: black;
+}
+
+.sidebar-links p {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
   cursor: pointer;
-  border-radius: 5px;
-  margin-bottom: 8px;
 }
 
-.sidebar li:hover {
-  background-color: #575757;
+.status-section {
+  padding-top: 10px;
 }
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.sidebar-links p:hover,
+.status-item:hover {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 5px;
+  transition: 0.3s;
+}
+
 
 /* Main Content Styles */
 .content {
-  flex-grow: 1;
-  padding: 30px;
+  margin-left: 260px; /* Ensures content does not overlap with sidebar */
+  padding: 20px;
   background-color: white;
   text-align: center;
+  min-height: calc(100vh - 100px); /* Adjusted for navbar height */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top:100px;
 }
 
 /* Application Forms Section */
+
 .application-forms h1 {
+  margin-top:20px;
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* Ensures 3 forms per row */
   gap: 20px;
-  justify-content: center;
+  width:100%;
+  max-width: calc(100% - 250px); /* Adjust width to account for sidebar */
+  padding: 10px;
+  margin-left: 0;
 }
 
 .form-card {
@@ -172,6 +209,9 @@ body {
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  
+  width: 280px;
+  height: 150px;
 }
 
 .form-card:hover {
@@ -193,34 +233,53 @@ body {
   background-color: #b30000;
 }
 
-/* Footer Chat Button */
-.chat-support {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  color: black;
+
+
+@media (max-width: 1024px) {
+  .content {
+    margin-left: 260px;
+    padding: 20px;
+  }
+  
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.chat-support img {
-  width: 50px;
-  cursor: pointer;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .container {
+  .navbar-home {
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .navbar-center {
+    margin-top: 10px;
+  }
+
+  .navbar-user-home {
+    align-items: center;
+    margin-top: 5px;
   }
 
   .sidebar {
     width: 100%;
     height: auto;
+    position: relative;
     text-align: center;
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 15px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chat-support {
+    bottom: 15px;
+    right: 15px;
   }
 }

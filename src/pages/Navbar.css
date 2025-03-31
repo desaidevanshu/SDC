@@ -75,13 +75,18 @@
 }
 
 /* Navbar */
-.navbar {
+.navbar-home {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   background: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left{
+  width: 200px;
+  height: 109px;
 }
 
 .navbar .nav-links {

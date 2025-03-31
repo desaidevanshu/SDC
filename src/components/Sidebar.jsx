@@ -1,23 +1,40 @@
 import React from "react";
 import "../style.css";
+import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
-const Sidebar = ({ setSelectedForm }) => {
+const Sidebar = () => {
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
-        <h3>Applicant Portal</h3>
-        <p>Somaiya Vidyavihar University</p>
+    <div className="sidebar">
+      {/* Logo Section */}
+      <div className="logo-container">
+        <div className="logo-box">
+          <h2>Applicant <br /> Portal</h2>
+          <p>Somaiya Vidyavihar University</p>
+        </div>
       </div>
-      <ul className="sidebar-menu">
-        <li onClick={() => setSelectedForm(null)}>Application Forms</li>
-        <li className="sidebar-submenu">Application Status</li>
-        <li className="status-option">🔄 Pending</li>
-        <li className="status-option">✅ Accepted</li>
-        <li className="status-option">❌ Rejected</li>
-        <li className="sidebar-submenu">FAQ’s</li>
-        <li className="sidebar-submenu">Contact Us</li>
-      </ul>
-    </aside>
+
+      {/* Sidebar Options */}
+      <div className="sidebar-links">
+        <p>Application Forms</p>
+
+        {/* Application Status Section */}
+        <div className="status-section">
+          <p>Application Status</p>
+          <div className="status-item">
+            <FaClock className="status-icon" /> Pending
+          </div>
+          <div className="status-item">
+            <FaCheckCircle className="status-icon" /> Accepted
+          </div>
+          <div className="status-item">
+            <FaTimesCircle className="status-icon" /> Rejected
+          </div>
+        </div>
+
+        <p>FAQ’s</p>
+        <p>Contact Us</p>
+      </div>
+    </div>
   );
 };
 

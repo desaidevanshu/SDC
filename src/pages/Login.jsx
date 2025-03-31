@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 import logo from "../assets/somaiya-logo.png";
+import logo1 from "../assets/trust.png";
 import googleIcon from "../assets/google-logo.jpg";
 
 const Login = () => {
@@ -25,6 +26,7 @@ const Login = () => {
       <div className="navbar">
         <img src={logo} alt="Somaiya Logo" className="navbar-logo" />
         <h1 className="navbar-title">Welcome to Student Development Cell</h1>
+        <img src={logo1} alt="Somaiya Trust Logo" className="navbar-logo1" />
       </div>
 
       {/* Login Container */}
