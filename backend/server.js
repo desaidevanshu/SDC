@@ -15,11 +15,13 @@ dotenv.config();
 const app = express();
 
 // 🔹 CORS Setup
-app.use(cors({ 
-  origin: process.env.FRONTEND_URL, 
-  methods: ["GET", "POST", "DELETE"], 
-  credentials: true 
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173"], // Allow both Vite & React dev servers
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // 🔹 Middleware
 app.use(express.json());
