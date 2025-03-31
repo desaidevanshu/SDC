@@ -3,32 +3,27 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { GridFSBucket } from "mongodb";
 
 import authRoutes from "./routes/authRoutes.js";
-import ug1FormRoutes from "./routes/ug1FormRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
-import UGForm2Routes from "./routes/UGForm2Route.js";
+import ug1FormRoutes from "./routes/ug1FormRoutes.js"; // Include the new route
 
 dotenv.config();
 
 const app = express();
 
+app.use(cors());
 // 🔹 CORS Setup
-app.use(
+/*app.use(
   cors({
-    origin: ["http://localhost:5173"], // Allow both Vite & React dev servers
+    origin: ["http://localhost:5173"], // Frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
-);
+); */
 
 // 🔹 Middleware
 app.use(express.json());
 app.use(cookieParser());
-
-// 🔹 Serve uploaded files
-app.use("/uploads", express.static("uploads"));
 
 // 🔹 MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -39,26 +34,9 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("✅ MongoDB Connected Successfully"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err.message));
 
-const conn = mongoose.connection;
-
-// 🔹 GridFS Setup
-let gfs;
-conn.once("open", () => {
-  gfs = new GridFSBucket(conn.db, { bucketName: "uploads" });
-  console.log("✅ GridFS connected successfully");
-});
-
 // 🔹 Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/ug1form", ug1FormRoutes);
-app.use("/api/upload", uploadRoutes);
-app.use("/api/ugform2", UGForm2Routes); // Ensure it matches frontend calls
-
-// 🔹 Global Error Handling
-app.use((err, req, res, next) => {
-  console.error("❌ Server Error:", err.message);
-  res.status(500).json({ error: "Internal Server Error" });
-});
+app.use("/api/ug1form", ug1FormRoutes); // Include UG1 Form routes
 
 // 🔹 Start Server
 const PORT = process.env.PORT || 5000;

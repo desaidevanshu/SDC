@@ -3,7 +3,6 @@ import axios from "axios";
 import "../styles/UG1.css";
 
 const UG1Form = () => {
-
   const [formData, setFormData] = useState({
     projectTitle: "",
     projectUtility: "",
@@ -20,13 +19,13 @@ const UG1Form = () => {
     }),
   });
 
-  const [groupLeaderSignature, setGroupLeaderSignature] = useState(null);
-  const [guideSignature, setGuideSignature] = useState(null);
   const [pdfFiles, setPdfFiles] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [formId, setFormId] = useState(null);
   const fileInputRef = useRef(null);
   const svvNetIdRef = useRef("");
+  const [groupLeaderSignature, setGroupLeaderSignature] = useState(null);
+  const [guideSignature, setGuideSignature] = useState(null);
 
   useEffect(() => {
     const storedSvvNetId = localStorage.getItem("svvNetId");
@@ -35,20 +34,12 @@ const UG1Form = () => {
     }
   }, []);
 
-   // Handle radio buttons
-   const handleRadioChange = (value) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      finance: value,
-    }));
-  };
-  
-  // ✅ Handle text input change
+  // Handle text input change
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // ✅ Handle student details input change
+  // Handle student details input change
   const handleStudentDetailsChange = (index, field, value) => {
     setFormData((prev) => {
       const updatedStudents = [...prev.studentDetails];
@@ -57,40 +48,78 @@ const UG1Form = () => {
     });
   };
 
-  // ✅ Handle File Upload (Signatures & PDFs)
-  const handleFileUpload = (event, type) => {
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    if (type === "signature") {
-      if (!file.type.startsWith("image/jpeg")) {
-        setErrorMessage("Only JPEG format is allowed for signatures.");
-        return;
-      }
-      event.target.name === "groupLeaderSignature"
-        ? setGroupLeaderSignature(file)
-        : setGuideSignature(file);
-    } else if (type === "document") {
-      if (file.type !== "application/pdf") {
-        setErrorMessage("Only PDF format is allowed for document upload.");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage("File size must be less than 5MB.");
-        return;
-      }
-      setPdfFiles((prev) => [...prev, file]);
-    }
-    setErrorMessage("");
+  // Handle Finance Option Selection
+  const handleRadioChange = (value) => {
+    setFormData((prev) => ({ ...prev, finance: value }));
   };
 
-  // ✅ Remove a selected PDF file
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files); 
+    const validFiles = [];
+    const existingFileNames = new Set(pdfFiles.map((file) => file.name)); // Prevent duplicates
+  
+    files.forEach((file) => {
+      if (file.type !== "application/pdf") {
+        alert("❌ Only PDF files are allowed.");
+      } else if (file.size > 5 * 1024 * 1024) {
+        alert("❌ File must be less than 5MB.");
+      } else if (existingFileNames.has(file.name)) {
+        alert("❌ File already selected.");
+      } else {
+        validFiles.push(file);
+      }
+    });
+  
+    if (validFiles.length) {
+      setPdfFiles((prev) => [...prev, ...validFiles]);
+    }
+  };
+
+  // Remove a selected file
   const removeFile = (index) => {
     setPdfFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ✅ Save Form Data & Generate Form ID
+  // Handle Signature Upload
+  const handleSignatureUpload = (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.type !== "image/jpeg") {
+      alert("❌ Only JPEG images are allowed.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("❌ File must be less than 2MB.");
+      return;
+    }
+
+    if (type === "groupLeader") {
+      setGroupLeaderSignature(file);
+    } else if (type === "guide") {
+      setGuideSignature(file);
+    }
+  };
+
+  // Upload Signature to Backend
+  const uploadSignature = async (file, type, id) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/ug1form/uploadSignature/${id}/${type}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      console.log(`✅ ${type} Signature Uploaded:`, response.data);
+    } catch (error) {
+      console.error(`❌ Error uploading ${type} signature:`, error);
+    }
+  };
+
+  // Save Form Data
   const handleSaveFormData = async () => {
     setErrorMessage("");
 
@@ -102,49 +131,48 @@ const UG1Form = () => {
     try {
       const dataToSend = { ...formData, svvNetId: svvNetIdRef.current };
       const response = await axios.post("http://localhost:5000/api/ug1form/saveFormData", dataToSend);
-      
+
+      console.log("✅ Form Data Saved:", response.data);
+
       if (response.data.formId) {
         setFormId(response.data.formId);
-        alert("Form data saved successfully!");
-
-        if (pdfFiles.length > 0) {
+        alert("✅ Form data saved successfully!");
+        console.log("Saved Form ID :",response.data.formId);
+        if(pdfFiles.length>0){
           await handleUploadPDF(response.data.formId);
         }
       } else {
         setErrorMessage("Failed to get form ID. Try again.");
       }
     } catch (error) {
-      console.error("Error saving form data:", error);
+      console.error("❌ Error Saving Form Data:", error);
       setErrorMessage("Error saving form data. Try again.");
     }
   };
 
-  // ✅ Upload Multiple PDFs
   const handleUploadPDF = async (formId) => {
     try {
       if (!formId || pdfFiles.length === 0) return;
-
-      for (const file of pdfFiles) {
-        const formData = new FormData();
-        formData.append("pdfFile", file);
-
-        await axios.post(`http://localhost:5000/api/ug1form/uploadPDF/${formId}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        console.log(`PDF ${file.name} uploaded successfully!`);
-      }
+    
+      const file = pdfFiles[0];  // Take the first file
+      const formData = new FormData();
+      formData.append("pdfFile", file);
+    
+      await axios.post(`http://localhost:5000/api/ug1form/uploadPdf/${formId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    
+      console.log(`PDF ${file.name} uploaded successfully!`);
     } catch (error) {
       console.error("PDF Upload error:", error);
     }
   };
-
-  // ✅ Handle Form Submission
+  
+  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     await handleSaveFormData();
   };
-
 
   return (
     <div className="form-container">
@@ -152,6 +180,7 @@ const UG1Form = () => {
       <p className="form-category">In-house Student Project within Department</p>
 
       {errorMessage && <p className="error">{errorMessage}</p>}
+
       <form onSubmit={handleSubmit}>
       <label>Title of the Project:</label>
       <input type="text" value={formData.projectTitle} onChange={(e) => handleInputChange("projectTitle", e.target.value)} />    
@@ -224,20 +253,20 @@ const UG1Form = () => {
           <input type="file" accept="image/jpeg" name="guideSignature" onChange={(e) => handleFileUpload(e, "signature")} />
           {guideSignature && <p className="file-name">{guideSignature.name}</p>}
         </div>
+
+      </div>
+      <div className="form-group">
+          <label>Upload Supporting Documents (PDF):</label>
+          <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf" multiple />
+          <ul className="file-list">
+          {pdfFiles.map((file, index) => (
+            <li key={index}>
+              {file.name} <button type="button" onClick={() => removeFile(index)}>❌ Remove</button>
+            </li>
+          ))}
+          </ul>
       </div>
 
-    
-      <div className="form-group">
-          <label className="form-label">Upload Supporting Documents:</label>
-          <input type="file" accept=".pdf" multiple onChange={handleFileUpload} className="form-file-input" />
-          {pdfFiles.length > 0 && (
-            <ul>
-              {pdfFiles.map((file, index) => (
-                <li key={index}>{file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</li>
-              ))}
-            </ul>
-          )}
-        </div>
       <div className="form-actions">
         <button className="back-btn">Back</button>
         <button className="submit-btn">Submit</button>
