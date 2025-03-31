@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema({
   srNo: String,
@@ -24,4 +24,7 @@ const UG1FormSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("UG1Form", UG1FormSchema);
+
+// ✅ Use `export default` for ES Modules
+const UG1Form = mongoose.model("UG1Form", UG1FormSchema);
+export default UG1Form;

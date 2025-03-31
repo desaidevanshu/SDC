@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";  // ✅ Use ES module import
 
 const studentSchema = new mongoose.Schema({
   srNo: String,
@@ -20,4 +20,6 @@ const UGForm2Schema = new mongoose.Schema({
   pdfFileId: { type: mongoose.Schema.Types.ObjectId, ref: "uploads.files" }, // GridFS File ID
 }, { timestamps: true });
 
-module.exports = mongoose.model("UGForm2", UGForm2Schema);
+const UGForm2 = mongoose.model("UGForm2", UGForm2Schema);
+
+export default UGForm2; // ✅ Use ES module export

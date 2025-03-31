@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";  // ✅ Use ES module import
 
 const uploadSchema = new mongoose.Schema({
   svvNetId: {
@@ -22,4 +22,5 @@ const uploadSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Upload = mongoose.model("Upload", uploadSchema);
-module.exports = Upload;
+
+export default Upload; // ✅ Use ES module export

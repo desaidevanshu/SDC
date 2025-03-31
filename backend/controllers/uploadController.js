@@ -1,6 +1,6 @@
-const Upload = require("../models/upload");
+import Upload from "../models/Upload.js"; // ✅ Fix import
 
-exports.uploadFiles = async (req, res) => {
+export const uploadFiles = async (req, res) => {
   try {
     console.log("📌 Received Form Data:", req.body);
     console.log("📌 Uploaded Files:", req.files);
@@ -26,7 +26,7 @@ exports.uploadFiles = async (req, res) => {
     const newUpload = new Upload({
       svvNetId,
       projectTitle,
-      studentDetails: JSON.parse(studentDetails),
+      studentDetails: JSON.parse(studentDetails), // Ensure proper parsing
       documents: documentFiles,
     });
 

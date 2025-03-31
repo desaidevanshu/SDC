@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import multer from "multer";
+import { uploadFiles } from "../controllers/uploadController.js"; // ✅ Fix import
+
 const router = express.Router();
-const uploadController = require("../controllers/uploadController");
-const multer = require("multer");
 
 // Set up Multer storage
 const storage = multer.diskStorage({
@@ -16,6 +17,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // File upload route
-router.post("/upload", upload.array("documents", 5), uploadController.uploadFiles);
+router.post("/upload", upload.array("documents", 5), uploadFiles); // ✅ Use named import
 
-module.exports = router;
+export default router;

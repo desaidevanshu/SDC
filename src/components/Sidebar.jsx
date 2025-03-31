@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "../style.css";
 import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
@@ -31,8 +32,9 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <p>FAQ’s</p>
-        <p>Contact Us</p>
+        <Link to="/faqs" className="nav-item">FAQ's</Link>
+        <br></br>
+        <Link to="/contact" className="nav-item">Contact Us</Link>
       </div>
     </div>
   );

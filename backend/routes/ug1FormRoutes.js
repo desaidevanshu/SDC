@@ -1,9 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const multer = require("multer");
-const { GridFsStorage } = require("multer-gridfs-storage");
-const { GridFSBucket } = require("mongodb");
-const UG1Form = require("../models/UG1Form");
+import express from "express";
+import mongoose from "mongoose"; // ✅ Use `import` instead of `require`
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+import { GridFSBucket } from "mongodb";
+import UG1Form from "../models/UG1Form.js"; // ✅ Ensure correct ES Module import
 
 const router = express.Router();
 
@@ -100,4 +100,6 @@ router.get("/user/:svvNetId", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+
+

@@ -14,7 +14,10 @@ const Login = () => {
     e.preventDefault();
     if (username === "devanshu.d" && password === "Devanshu123") {
       navigate("/home");
-    } else {
+    } 
+    else if(username=== "sohamgore" && password === "12345678"){
+      navigate("/home");
+    }else {
       alert("Invalid credentials!");
     }
   };

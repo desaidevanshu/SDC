@@ -1,18 +1,20 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const { GridFSBucket } = require("mongodb");
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { GridFSBucket } from "mongodb";
 
-const authRoutes = require("./routes/authRoutes");
-const ug1FormRoutes = require("./routes/ug1FormRoutes");
-const uploadRoutes = require("./routes/uploadRoutes");
-const UGForm2Routes = require("./routes/UGForm2Route");
+import authRoutes from "./routes/authRoutes.js";
+import ug1FormRoutes from "./routes/ug1FormRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import UGForm2Routes from "./routes/UGForm2Route.js";
+
+dotenv.config();
 
 const app = express();
 
-// 🔹 CORS Setup (Allow DELETE)
+// 🔹 CORS Setup
 app.use(cors({ 
   origin: process.env.FRONTEND_URL, 
   methods: ["GET", "POST", "DELETE"], 

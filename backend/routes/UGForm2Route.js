@@ -1,12 +1,11 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const multer = require("multer");
-const { GridFsStorage } = require("multer-gridfs-storage");
-const { GridFSBucket } = require("mongodb");
-const UGForm2 = require("../models/UGForm2");
+import express from "express";
+import mongoose from "mongoose"; // ✅ Use `import` instead of `require`
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+import { GridFSBucket } from "mongodb";
+import UGForm2 from "../models/UGForm2.js"; // ✅ Ensure correct ES Module import
 
 const router = express.Router();
-
 // ✅ MongoDB Connection
 const conn = mongoose.connection;
 let gfs;
@@ -153,4 +152,4 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
