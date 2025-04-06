@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/UG2.css";
 
 const UG2Form = () => {
@@ -12,6 +12,15 @@ const UG2Form = () => {
   const [expenses, setExpenses] = useState([
     { category: "", amount: "", details: "" }
   ]);
+  const [totalBudget, setTotalBudget] = useState(0);
+
+  // Calculate total whenever expenses change
+  useEffect(() => {
+    const sum = expenses.reduce((total, expense) => {
+      return total + (parseFloat(expense.amount) || 0);
+    }, 0);
+    setTotalBudget(sum);
+  }, [expenses]);
 
   // File Validation Function
   const handleFileUpload = (event, type) => {
@@ -30,10 +39,7 @@ const UG2Form = () => {
         setGuideSignature(file);
       }
     } else if (type === "document") {
-      if (file.type !== "application/pdf") {
-        setErrorMessage("Only PDF format is allowed for document upload.");
-        return;
-      }
+      
       if (file.size > 5 * 1024 * 1024) {
         setErrorMessage("File size must be less than 5MB.");
         return;
@@ -56,6 +62,7 @@ const UG2Form = () => {
       setStudents(updatedStudents);
     }
   };
+  
 
   // Add a new expense row
   const addExpenseRow = () => {
@@ -68,6 +75,13 @@ const UG2Form = () => {
       const updatedExpenses = expenses.filter((_, i) => i !== index);
       setExpenses(updatedExpenses);
     }
+  };
+
+  // Handle expense amount change
+  const handleExpenseChange = (index, field, value) => {
+    const updatedExpenses = [...expenses];
+    updatedExpenses[index][field] = value;
+    setExpenses(updatedExpenses);
   };
 
   return (
@@ -148,18 +162,31 @@ const UG2Form = () => {
         <tbody>
           {expenses.map((expense, index) => (
             <tr key={index}>
-              <td><input type="text" value={expense.category} /></td>
-              <td><input type="number" value={expense.amount} /></td>
-              <td><textarea value={expense.details} /></td>
+              <td><input 
+                type="text" 
+                value={expense.category} 
+                onChange={(e) => handleExpenseChange(index, 'category', e.target.value)} 
+              /></td>
+              <td><input 
+                type="number" 
+                value={expense.amount} 
+                onChange={(e) => handleExpenseChange(index, 'amount', e.target.value)}
+              /></td>
+              <td><textarea 
+                value={expense.details} 
+                onChange={(e) => handleExpenseChange(index, 'details', e.target.value)}
+              /></td>
               <td><button type="button" className="remove-btn" onClick={() => removeExpenseRow(index)}>❌</button></td>
             </tr>
           ))}
+          <tr className="total-row">
+            <td>Total Budget (Including Contingency Amount)</td>
+            <td>{totalBudget.toFixed(2)}</td>
+            <td colSpan="2"></td>
+          </tr>
         </tbody>
       </table>
       <button type="button" className="add-btn" onClick={addExpenseRow}>➕ Add More Expense</button>
-
-      <label>Total Budget (Including Contingency Amount):</label>
-      <input type="text" />
 
       <div className="signatures">
         <div>
@@ -175,8 +202,8 @@ const UG2Form = () => {
         </div>
       </div>
 
-      <label>Upload Additional Documents (PDF Only, Max 5MB)</label>
-      <input type="file" accept="application/pdf" onChange={(e) => handleFileUpload(e, "document")} />
+      <label>Upload Additional Documents </label>
+      <input type="file"  onChange={(e) => handleFileUpload(e, "document")} />
       {uploadedFile && <p className="file-name">{uploadedFile.name}</p>}
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}

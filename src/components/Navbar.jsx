@@ -22,7 +22,7 @@ const Navbar = () => {
       
       <div className="navbar-user-home">
         <span className="user-name">Devanshu Desai</span>
-        <span className="user-role">UG (A18DS)</span>
+        <span className="user-role">UG (A1&DS)</span>
       </div>
     </nav>
   );
