@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import "./login.css";
 import logo from "../assets/somaiya-logo.png";
 import logo1 from "../assets/trust.png";
@@ -8,23 +9,49 @@ import googleIcon from "../assets/google-logo.jpg";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (username === "devanshu.d" && password === "Devanshu123") {
+    setError("");
+
+    // Hardcoded credentials
+    const hardcodedUsers = {
+      "devanshu.d": "Devanshu123",
+      "sohamgore": "12345678",
+    };
+
+    if (hardcodedUsers[username] === password) {
+      // Store in localStorage
+      localStorage.setItem("svvNetId", username);
+      localStorage.setItem("user", JSON.stringify({ svvNetId: username, role: "UG (AI&DS)" }));
+
+      console.log("Stored svvNetId:", localStorage.getItem("svvNetId")); // Debugging
+
       navigate("/home");
-    } 
-    else if(username=== "sohamgore" && password === "12345678"){
-      navigate("/home");
-    }else {
-      alert("Invalid credentials!");
+    } else {
+      setError("Invalid credentials!");
     }
+
+    // Optional: Uncomment this if you want to send login requests to an API
+    // try {
+    //   const res = await axios.post("http://localhost:5000/api/auth/login", { svvNetId: username, password });
+    //   if (res.status === 200 && res.data.token) {
+    //     localStorage.setItem("token", res.data.token);
+    //     localStorage.setItem("svvNetId", username);
+    //     localStorage.setItem("user", JSON.stringify({ svvNetId: username, role: "UG (AI&DS)" }));
+    //     navigate("/home");
+    //   } else {
+    //     setError("Login failed. Please try again.");
+    //   }
+    // } catch (err) {
+    //   setError(err.response?.data?.message || "Login failed.");
+    // }
   };
 
   return (
-    <>
-      <div className="login-page">
+    <div className="login-page">
       {/* Navbar */}
       <div className="navbar">
         <img src={logo} alt="Somaiya Logo" className="navbar-logo" />
@@ -33,21 +60,19 @@ const Login = () => {
       </div>
 
       {/* Login Container */}
-      
       <div className="login-container">
         {/* Validator Box */}
         <div className="validator-box">
           <h1 className="validator-title">
-            <span className="highlight">Student</span> <br /> 
+            <span className="highlight">Student</span> <br />
             <span className="highlight">Development Cell</span>
           </h1>
           <p className="description">
             The Student Development Policy at K. J. Somaiya College of Engineering reflects our 
-            commitment to fostering a dynamic and enriching academic environment for students across all levels of study,from Undergraduate (UG) to Postgraduate (PG) and Doctor of 
-            Philosophy (Ph.D.). 
+            commitment to fostering a dynamic and enriching academic environment for students across all levels of study.
           </p>
           <h2 className="validator-question">Validator ?</h2>
-  
+
           <p className="validator-login-text">Login to go on Dashboard</p>
           <button className="google-login">
             <img src={googleIcon} alt="Google" className="icon" /> Login with Somaiya mail
@@ -83,17 +108,17 @@ const Login = () => {
               <label htmlFor="remember">Remember me</label>
             </div>
 
+            {error && <p className="error-message">{error}</p>}
+
             <button type="submit" className="login-button">Login</button>
           </form>
           <h1 className="or">OR</h1>
           <button className="google-login">
             <img src={googleIcon} alt="Google" className="icon" /> Login with Somaiya mail
           </button>
-        
         </div>
       </div>
-     </div>
-    </>
+    </div>
   );
 };
 

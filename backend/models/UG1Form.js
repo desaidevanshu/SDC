@@ -21,6 +21,7 @@ const UG1FormSchema = new mongoose.Schema({
   document: {
     filename: String,
     url: String,
+    fileId: { type: mongoose.Schema.Types.ObjectId, ref: "fs.files" },  // Storing the GridFS file ID
   },
 });
 

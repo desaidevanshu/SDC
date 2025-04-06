@@ -47,6 +47,7 @@ const UG1Form = () => {
       }
       setFiles(prev => ({ ...prev, [field]: file }));
     } else if (field === 'partsList') {
+      
       if (file.size > 5 * 1024 * 1024) {
         setErrorMessage("File size must be less than 5MB.");
         return;
@@ -284,7 +285,7 @@ const UG1Form = () => {
       </div>
 
       <div className="mb-6">
-        <label className="block font-semibold mb-2">Upload list of parts with price ( Max 5MB)</label>
+        <label className="block font-semibold mb-2">Upload list of parts with price (Max 5MB)</label>
         <div className="flex items-center">
           <label className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600">
             Choose File
@@ -305,7 +306,7 @@ const UG1Form = () => {
         <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
       )}
 
-<div className="flex justify-between">
+      <div className="flex justify-between">
           <button className="back-btn bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
             Back
           </button>

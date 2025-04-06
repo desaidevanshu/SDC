@@ -32,6 +32,7 @@ conn.once("open", () => {
 });
 const upload = multer({ storage });
 
+
 // 📌 **Submit Form Data (Without File)**
 router.post("/saveFormData", async (req, res) => {
   try {
@@ -60,7 +61,13 @@ router.post("/uploadPDF/:formId", upload.single("pdfFile"), async (req, res) => 
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileId = req.file.id;
+    // ✅ Ensure file is saved before linking
+    const file = await gfs.find({ filename: req.file.filename }).toArray();
+    if (!file.length) {
+      return res.status(500).json({ message: "File not saved in GridFS" });
+    }
+
+    const fileId = file[0]._id;
     console.log("🆔 File ID:", fileId);
 
     const updatedForm = await UGForm2.findByIdAndUpdate(
@@ -81,7 +88,6 @@ router.post("/uploadPDF/:formId", upload.single("pdfFile"), async (req, res) => 
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
-
 
 // 📌 3️⃣ **Fetch All Forms**
 router.get("/get-all", async (req, res) => {
@@ -115,11 +121,13 @@ router.get("/file/:id", async (req, res) => {
     console.log(`🟢 Fetching file with ID: ${req.params.id}`);
     const fileId = new mongoose.Types.ObjectId(req.params.id);
 
-    const files = await gfs.find({ _id: fileId }).toArray();
-    if (!files.length) return res.status(404).json({ error: "File not found" });
-
-    console.log("✅ File found, streaming...");
-    gfs.openDownloadStream(fileId).pipe(res);
+    gfs.find({ _id: fileId }).toArray((err, files) => {
+      if (err || !files.length) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      console.log("✅ File found, streaming...");
+      gfs.openDownloadStream(fileId).pipe(res);
+    });
   } catch (error) {
     console.error("❌ File Fetch Error:", error);
     res.status(500).json({ error: "Error fetching file" });
@@ -135,12 +143,12 @@ router.delete("/delete/:id", async (req, res) => {
 
     if (form.pdfFileId) {
       const fileId = new mongoose.Types.ObjectId(form.pdfFileId);
-      const files = await gfs.find({ _id: fileId }).toArray();
-
-      if (files.length) {
-        await gfs.delete(fileId);
-        console.log(`✅ PDF deleted: ${fileId}`);
-      }
+      gfs.find({ _id: fileId }).toArray((err, files) => {
+        if (files.length) {
+          gfs.delete(fileId);
+          console.log(`✅ PDF deleted: ${fileId}`);
+        }
+      });
     }
 
     await UGForm2.findByIdAndDelete(req.params.id);
