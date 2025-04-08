@@ -35,7 +35,7 @@ const Home = () => {
                   <div key={form.id} className="form-card" onClick={() => navigate(`/home/${form.path}`)}>
                     <h3>{form.id}</h3>
                     <p>Category: {form.category}</p>
-                    <button className="fill-form-btn">Fill Form</button>
+                    <button className="fill-form-btn">Apply</button>
                   </div>
                 ))}
               </div>
