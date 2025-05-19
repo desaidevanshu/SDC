@@ -238,3 +238,32 @@ label {
     margin-bottom: 20px;
   }
 }
+.custom-google-btn {
+  display: flex;
+  align-items: center;
+  background: #e0e0e0;
+  color: #222;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+  box-shadow: none;
+}
+
+.custom-google-btn:hover {
+  background: #d5d5d5;
+}
+
+.google-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+  background: transparent;
+  border-radius: 50%;
+  object-fit: cover;
+}
