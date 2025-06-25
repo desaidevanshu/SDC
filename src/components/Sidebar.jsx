@@ -1,15 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import "../style.css";
 import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const Sidebar = () => {
+  // Get user role from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isValidator = user?.role === "Validator";
+  const portalLabel = isValidator ? "Validator Portal" : "Applicant Portal";
+  const pendingLink = isValidator ? "/facPending" : "/pending";
+
   return (
     <div className="sidebar">
       {/* Logo Section */}
       <div className="logo-container">
         <div className="logo-box">
-          <h2>Applicant <br /> Portal</h2>
+          <h2>{portalLabel.split(" ")[0]} <br /> {portalLabel.split(" ")[1]}</h2>
           <p>Somaiya Vidyavihar University</p>
         </div>
       </div>
@@ -22,7 +28,9 @@ const Sidebar = () => {
         <div className="status-section">
           <p>Application Status</p>
           <div className="status-item">
-            <FaClock className="status-icon" /> Pending
+            <Link to={pendingLink}>
+              <FaClock className="status-icon" /> Pending 
+            </Link>
           </div>
           <div className="status-item">
             <FaCheckCircle className="status-icon" /> Accepted
@@ -33,7 +41,7 @@ const Sidebar = () => {
         </div>
 
         <Link to="/faqs" className="nav-item">FAQ's</Link>
-        <br></br>
+        <br />
         <Link to="/contact" className="nav-item">Contact Us</Link>
       </div>
     </div>

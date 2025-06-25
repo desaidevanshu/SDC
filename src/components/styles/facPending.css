@@ -1,0 +1,82 @@
+/* Main wrapper handles layout */
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page content area with top & left padding to avoid overlap */
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  padding-left: 250px; /* Sidebar width */
+  padding-top: 80px;   /* Navbar height */
+  box-sizing: border-box;
+  background-color: #f3f4f6;
+}
+
+/* Content area centers the card/table */
+.content-area {
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 1000px;
+}
+
+/* Card/table wrapper */
+.table-wrapper {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Table styling */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Button styling */
+.view-button {
+  background-color: #2563eb;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.view-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* No data styling */
+.no-data {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+}
+
+/* Page heading styles */
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}

@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-//import facHome from "./pages/facHome";
+import Fachome from "./pages/Fachome";
 import UG_1 from "./components/FormComponent/UG_1";
 import UG_2 from "./components/FormComponent/UG_2";
 import UG_3_A from "./components/FormComponent/UG_3_A";
@@ -14,6 +14,9 @@ import R1 from "./components/FormComponent/R1";
 import Policy from "./pages/Policy";
 import FAQ from "./pages/FAQ"
 import Contact from "./pages/Contact";
+import PendingApplications from "./pages/PendingApplications";
+import FacPendingApplications from "./pages/facPendingApplications";
+import ApplicationDetails from "./pages/ApplicationDetails";
 import "./style.css";
 
 const App = () => {
@@ -22,7 +25,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        
+        <Route path="/fachome" element={<Fachome />} />
         <Route path="/home/ug1" element={<UG_1 />} />
         <Route path="/home/ug2" element={<UG_2 />} />
         <Route path="/home/ug3a" element={<UG_3_A />} />
@@ -34,6 +37,9 @@ const App = () => {
         <Route path="/policy" element={<Policy />} />
         <Route path="/faqs" element={<FAQ />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/pending" element={<PendingApplications />} />
+        <Route path="/application/:id" element={<ApplicationDetails />} />
+        <Route path="/facPending" element={<FacPendingApplications />} />
         </Routes>
     </Router>
   );

@@ -28,7 +28,7 @@ const Login = () => {
 
     if (hardcodedUsers[username] === password) {
       localStorage.setItem("svvNetId", username);
-      localStorage.setItem("user", JSON.stringify({ svvNetId: username, role: "UG (AI&DS)" }));
+      localStorage.setItem("user", JSON.stringify({ svvNetId: username, role: "Student" }));
       navigate("/home");
     } else {
       setStudentError("Invalid credentials!");
@@ -36,8 +36,15 @@ const Login = () => {
     }
   };
 
+  
+  const VALIDATOR_EMAILS=[
+    "devanshu.d@somaiya.edu",
+    "smitasankhe@somaiya.edu",
+    "vaibhav.vasani@somaiya.edu",
+    "swapnil.cp@somaiya.edu",
+  ];
   // Handles Google OAuth for both Student and Validator
-  const handleGoogleSuccess = (credentialResponse, role = "UG (AI&DS)") => {
+  const handleGoogleSuccess = (credentialResponse, role = "Student") => {
     const setError = role === "Validator" ? setValidatorError : setStudentError;
     setError("");
     try {
@@ -71,13 +78,30 @@ const Login = () => {
       }
 
       let userRole = role;
-      if (decoded.email && decoded.email.includes("validator")) {
+      if(decoded.email=="sdc-kjsce@somaiya.edu"){
+        userRole = "Admin";
+      }
+      else if ( role === "Validator" ) {
+        if (!VALIDATOR_EMAILS.includes(decoded.email)) {
+          setError("Access denied: You are not authorized as a Validator.");
+          alert("Access denied: You are not authorized as a Validator.");
+          return;
+        }
         userRole = "Validator";
       }
 
       localStorage.setItem("svvNetId", decoded.email);
       localStorage.setItem("user", JSON.stringify({ svvNetId: decoded.email, role: userRole }));
-      navigate("/home");
+
+      // Redirect based on role
+      if (userRole === "Admin") {
+        navigate("/facHome");
+      }
+     else  if (userRole === "Validator") {
+        navigate("/facHome");
+      } else {
+        navigate("/home");
+      }
     } catch (err) {
       console.error("Google login error:", err);
       setError("Google login failed: Invalid token.");
@@ -162,8 +186,8 @@ const Login = () => {
             </form>
             <h1 className="or">OR</h1>
             <GoogleLogin
-              onSuccess={(credentialResponse) => handleGoogleSuccess(credentialResponse, "UG (AI&DS)")}
-              onError={() => handleGoogleError("UG (AI&DS)")}
+              onSuccess={(credentialResponse) => handleGoogleSuccess(credentialResponse, "Student")}
+              onError={() => handleGoogleError("Student")}
               width="100%"
               text="signin_with"
               shape="pill"

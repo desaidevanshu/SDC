@@ -24,6 +24,7 @@ const UG1Form = () => {
   });
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +48,6 @@ const UG1Form = () => {
       }
       setFiles(prev => ({ ...prev, [field]: file }));
     } else if (field === 'partsList') {
-      
       if (file.size > 5 * 1024 * 1024) {
         setErrorMessage("File size must be less than 5MB.");
         return;
@@ -80,10 +80,38 @@ const UG1Form = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmissionStatus("Pending");
+    
+    const submission = {
+      formData,
+      files: {
+        groupLeaderSignature: files.groupLeaderSignature?.name || '',
+        guideSignature: files.guideSignature?.name || '',
+        partsList: files.partsList?.name || ''
+      },
+      status: "Pending",
+      submissionDate: new Date().toISOString()
+    };
+    
+    const existingSubmissions = JSON.parse(localStorage.getItem('projectSubmissions') || '[]');
+    existingSubmissions.push(submission);
+    localStorage.setItem('projectSubmissions', JSON.stringify(existingSubmissions));
+    
+    alert("Form submitted successfully! Your request is now pending approval.");
+  };
+
   return (
     <div className="form-container max-w-4xl mx-auto p-5 bg-gray-50 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Under Graduate Form 1</h1>
       <p className="text-xl font-semibold mb-4 text-center text-gray-600">In-house Student Project within Department</p>
+      
+      {submissionStatus === "Pending" && (
+        <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">
+          Your submission is pending approval.
+        </div>
+      )}
       
       <div className="mb-6">
         <label className="block font-semibold mb-2">Title of the Project:</label>
@@ -292,7 +320,6 @@ const UG1Form = () => {
             <input
               type="file"
               className="hidden"
-              
               onChange={(e) => handleFileUpload('partsList', e)}
             />
           </label>
@@ -307,13 +334,16 @@ const UG1Form = () => {
       )}
 
       <div className="flex justify-between">
-          <button className="back-btn bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
-            Back
-          </button>
-          <button className="submit-btn bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
-            Submit
-          </button>
-        </div>
+        <button className="back-btn bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
+          Back
+        </button>
+        <button 
+          className="submit-btn bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+      </div>
     </div>
   );
 };
