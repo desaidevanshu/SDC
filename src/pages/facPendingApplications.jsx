@@ -9,24 +9,39 @@ const FacPendingApplications = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchApplications = async () => {
-      const mockData = [
-        {
-          id: 1,
-          topic: "EVENT 1",
-          name: "Faculty_Computer_KJSCE",
-          submitted: "24/03/2025",
-          branch: "AIML",
-        },
-      ];
-      setApplications(mockData);
-    };
-
-    fetchApplications();
+    const stored = JSON.parse(localStorage.getItem("pendingApps")) || [];
+    setApplications(stored);
   }, []);
 
-  const handleViewClick = (id) => {
-    navigate(`/application/${id}`);
+  const updateStorage = (key, item) => {
+    const existing = JSON.parse(localStorage.getItem(key)) || [];
+    localStorage.setItem(key, JSON.stringify([...existing, item]));
+  };
+
+  const handleAction = (type, id) => {
+    const actionName = type === "approve" ? "Approve" : "Reject";
+    const confirmed = window.confirm(`Are you sure to ${actionName}?`);
+    if (!confirmed) return;
+
+    let remarks = "";
+    while (!remarks) {
+      remarks = window.prompt(`Enter remarks for ${actionName}:`);
+      if (!remarks) alert("Remarks are required.");
+    }
+
+    const app = applications.find((a) => a.id === id);
+    const updated = { ...app, remarks };
+
+    // Save to approved or rejected
+    updateStorage(type === "approve" ? "approvedApps" : "rejectedApps", updated);
+
+    // Remove from shared pending
+    const newList = applications.filter((a) => a.id !== id);
+    setApplications(newList);
+    localStorage.setItem("pendingApps", JSON.stringify(newList));
+
+    // Navigate
+    navigate(`/${type === "approve" ? "facaccepted" : "facRejected"}`);
   };
 
   return (
@@ -36,10 +51,6 @@ const FacPendingApplications = () => {
       <div className="page-wrapper">
         <div className="content-area">
           <h2 className="page-title">Pending Applications</h2>
-          <p className="subtitle">
-            Easily track the details of pending applications.
-          </p>
-
           <div className="table-wrapper">
             <table className="custom-table">
               <thead>
@@ -60,21 +71,14 @@ const FacPendingApplications = () => {
                       <td>{app.submitted}</td>
                       <td>{app.branch}</td>
                       <td>
-                        <button
-                          onClick={() => handleViewClick(app.id)}
-                          className="view-button"
-                        >
-                          View
-                        </button>
+                        <button className="view-button">View</button>
+                        <button onClick={() => handleAction("approve", app.id)} className="approve-button">Approve</button>
+                        <button onClick={() => handleAction("reject", app.id)} className="reject-button">Reject</button>
                       </td>
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan="5" className="no-data">
-                      No pending applications found.
-                    </td>
-                  </tr>
+                  <tr><td colSpan="5">No Pending Applications</td></tr>
                 )}
               </tbody>
             </table>

@@ -9,6 +9,8 @@ const Sidebar = () => {
   const isValidator = user?.role === "Validator";
   const portalLabel = isValidator ? "Validator Portal" : "Applicant Portal";
   const pendingLink = isValidator ? "/facPending" : "/pending";
+  const acceptedLink = isValidator ? "/facaccepted" : "/accepted";
+  const rejectedLink = isValidator ? "/facRejected" : "/rejected";
 
   return (
     <div className="sidebar">
@@ -33,10 +35,14 @@ const Sidebar = () => {
             </Link>
           </div>
           <div className="status-item">
-            <FaCheckCircle className="status-icon" /> Accepted
+            <Link to={acceptedLink}>
+              <FaCheckCircle className="status-icon" /> Accepted
+            </Link>
           </div>
           <div className="status-item">
-            <FaTimesCircle className="status-icon" /> Rejected
+            <Link to={rejectedLink}>
+              <FaTimesCircle className="status-icon" /> Rejected
+            </Link>
           </div>
         </div>
 

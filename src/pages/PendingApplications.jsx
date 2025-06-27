@@ -9,20 +9,38 @@ const PendingApplications = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchApplications = async () => {
-      const mockData = [
-        {
-          id: 1,
-          topic: "EVENT 1",
-          name: "Faculty_Computer_KJSCE",
-          submitted: "24/03/2025",
-          branch: "AIML",
-        },
-      ];
-      setApplications(mockData);
-    };
+    const mockData = [
+      {
+        id: 1,
+        topic: "EVENT 1",
+        name: "Faculty_Computer_KJSCE",
+        submitted: "24/03/2025",
+        branch: "AIML",
+      },
+      {
+        id: 2,
+        topic: "EVENT 2",
+        name: "Faculty_Electronics_KJSCE",
+        submitted: "25/03/2025",
+        branch: "Electronics",
+      },
+      {
+        id: 3,
+        topic: "EVENT 3",
+        name: "Faculty_Mechanical_KJSCE",
+        submitted: "26/03/2025",
+        branch: "Mechanical",
+      },
+    ];
 
-    fetchApplications();
+    // Only initialize if pendingApps is empty (first load)
+    const existing = localStorage.getItem("pendingApps");
+    if (!existing) {
+      localStorage.setItem("pendingApps", JSON.stringify(mockData));
+    }
+
+    const pending = JSON.parse(localStorage.getItem("pendingApps")) || [];
+    setApplications(pending);
   }, []);
 
   const handleViewClick = (id) => {
@@ -37,7 +55,7 @@ const PendingApplications = () => {
         <div className="content-area">
           <h2 className="page-title">Pending Applications</h2>
           <p className="subtitle">
-            Easily track the details of pending applications.
+            These are the applications you’ve submitted and are waiting for faculty approval.
           </p>
 
           <div className="table-wrapper">

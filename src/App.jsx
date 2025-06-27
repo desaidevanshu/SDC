@@ -17,6 +17,11 @@ import Contact from "./pages/Contact";
 import PendingApplications from "./pages/PendingApplications";
 import FacPendingApplications from "./pages/facPendingApplications";
 import ApplicationDetails from "./pages/ApplicationDetails";
+import FacRejectedApplications from "./pages/facRejectedApplication";
+import FacAcceptedApplications from "./pages/facApproveApplication";
+import AcceptedApplications from "./pages/AcceptedApplications";
+import RejectedApplications from "./pages/RejectedApplications";
+
 import "./style.css";
 
 const App = () => {
@@ -40,6 +45,10 @@ const App = () => {
         <Route path="/pending" element={<PendingApplications />} />
         <Route path="/application/:id" element={<ApplicationDetails />} />
         <Route path="/facPending" element={<FacPendingApplications />} />
+        <Route path="/facRejected" element={<FacRejectedApplications />} />
+        <Route path="/facaccepted" element={<FacAcceptedApplications />} />
+        <Route path="/accepted" element={<AcceptedApplications />} />
+        <Route path="/rejected" element={<RejectedApplications />} />
         </Routes>
     </Router>
   );

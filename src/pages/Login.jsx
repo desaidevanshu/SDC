@@ -95,7 +95,7 @@ const Login = () => {
 
       // Redirect based on role
       if (userRole === "Admin") {
-        navigate("/facHome");
+        navigate("/AdHome");
       }
      else  if (userRole === "Validator") {
         navigate("/facHome");
@@ -109,7 +109,7 @@ const Login = () => {
     }
   };
 
-  const handleGoogleError = (role = "UG (AI&DS)") => {
+  const handleGoogleError = (role = "Student") => {
     const setError = role === "Validator" ? setValidatorError : setStudentError;
     setError("Google login failed. Please try again.");
     alert("Google login failed. Please try again.");

@@ -80,3 +80,48 @@
   color: #666;
   margin-bottom: 20px;
 }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.approve-button {
+  background-color: #22c55e; /* green */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reject-button {
+  background-color: #ef4444; /* red */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.view-button {
+  background-color: #3b82f6; /* blue */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.approve-button:hover {
+  background-color: #16a34a;
+}
+
+.reject-button:hover {
+  background-color: #dc2626;
+}
+
+.view-button:hover {
+  background-color: #2563eb;
+}
