@@ -4,20 +4,42 @@ import "../style.css";
 import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const Sidebar = () => {
-  // Get user role from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
-  const isValidator = user?.role === "Validator";
-  const portalLabel = isValidator ? "Validator Portal" : "Applicant Portal";
-  const pendingLink = isValidator ? "/facPending" : "/pending";
-  const acceptedLink = isValidator ? "/facaccepted" : "/accepted";
-  const rejectedLink = isValidator ? "/facRejected" : "/rejected";
+  const role = user?.role || "Applicant";
+
+  // Set portal label
+  const portalLabel = `${role} Portal`;
+
+  // Set role-based routing
+  const getRoute = (type) => {
+    switch (role) {
+      case "Validator":
+        return `/fac${type}`;
+      case "Department Coordinator":
+        return `/deptcoord${type}`;
+      case "Institute Coordinator":
+        return `/insticoord${type}`;
+      case "HOD":
+        return `/hod${type}`;
+      case "Principal":
+        return `/principal${type}`;
+      default:
+        return `/${type.toLowerCase()}`; // fallback for Student or unknown roles
+    }
+  };
+
+  const pendingLink = getRoute("Pending");
+  const acceptedLink = getRoute("Accepted");
+  const rejectedLink = getRoute("Rejected");
 
   return (
     <div className="sidebar">
       {/* Logo Section */}
       <div className="logo-container">
         <div className="logo-box">
-          <h2>{portalLabel.split(" ")[0]} <br /> {portalLabel.split(" ")[1]}</h2>
+          <h2>
+            {portalLabel.split(" ")[0]} <br /> {portalLabel.split(" ")[1]}
+          </h2>
           <p>Somaiya Vidyavihar University</p>
         </div>
       </div>
@@ -29,16 +51,19 @@ const Sidebar = () => {
         {/* Application Status Section */}
         <div className="status-section">
           <p>Application Status</p>
+
           <div className="status-item">
             <Link to={pendingLink}>
-              <FaClock className="status-icon" /> Pending 
+              <FaClock className="status-icon" /> Pending
             </Link>
           </div>
+
           <div className="status-item">
             <Link to={acceptedLink}>
               <FaCheckCircle className="status-icon" /> Accepted
             </Link>
           </div>
+
           <div className="status-item">
             <Link to={rejectedLink}>
               <FaTimesCircle className="status-icon" /> Rejected

@@ -9,6 +9,37 @@ const FacPendingApplications = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+       const mockData = [
+      {
+        id:16014223035,
+        topic: "UG_1",
+        name: "Faculty_Computer_KJSCE",
+        submitted: "24/03/2025",
+        branch: "AIML",
+      },
+      {
+        id: 16014210456,
+        topic: "PG_2",
+        name: "Faculty_Electronics_KJSCE",
+        submitted: "25/03/2025",
+        branch: "Electronics",
+      },
+      {
+        id: 16014204256,
+        topic: "UG_3",
+        name: "Faculty_Mechanical_KJSCE",
+        submitted: "26/03/2025",
+        branch: "Mechanical",
+      },
+    ];
+
+    // Only initialize if pendingApps is empty (first load)
+    const existing = localStorage.getItem("pendingApps");
+    if (!existing) {
+      localStorage.setItem("pendingApps", JSON.stringify(mockData));
+    }
+
+
     const stored = JSON.parse(localStorage.getItem("pendingApps")) || [];
     setApplications(stored);
   }, []);
@@ -33,7 +64,7 @@ const FacPendingApplications = () => {
     const updated = { ...app, remarks };
 
     // Save to approved or rejected
-    updateStorage(type === "approve" ? "approvedApps" : "rejectedApps", updated);
+    updateStorage(type === "approve" ? "approveApps" : "rejectedApps", updated);
 
     // Remove from shared pending
     const newList = applications.filter((a) => a.id !== id);

@@ -11,22 +11,22 @@ const PendingApplications = () => {
   useEffect(() => {
     const mockData = [
       {
-        id: 1,
-        topic: "EVENT 1",
+        id:16014223035,
+        topic: "UG_1",
         name: "Faculty_Computer_KJSCE",
         submitted: "24/03/2025",
         branch: "AIML",
       },
       {
-        id: 2,
-        topic: "EVENT 2",
+        id: 16014210456,
+        topic: "PG_2",
         name: "Faculty_Electronics_KJSCE",
         submitted: "25/03/2025",
         branch: "Electronics",
       },
       {
-        id: 3,
-        topic: "EVENT 3",
+        id: 16014204256,
+        topic: "UG_3",
         name: "Faculty_Mechanical_KJSCE",
         submitted: "26/03/2025",
         branch: "Mechanical",

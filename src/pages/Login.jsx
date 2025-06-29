@@ -17,14 +17,15 @@ const Login = () => {
   const [validatorError, setValidatorError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const hardcodedUsers = {
+    "devanshu.d": "Devanshu123",
+    "sohamgore": "12345678",
+  };
+
+  const handleLogin = (e) => {
     e.preventDefault();
     setStudentError("");
-
-    const hardcodedUsers = {
-      "devanshu.d": "Devanshu123",
-      "sohamgore": "12345678",
-    };
+    localStorage.clear(); // Clear previous data
 
     if (hardcodedUsers[username] === password) {
       localStorage.setItem("svvNetId", username);
@@ -36,71 +37,103 @@ const Login = () => {
     }
   };
 
-  
-  const VALIDATOR_EMAILS=[
-    "devanshu.d@somaiya.edu",
+  const VALIDATOR_EMAILS = [
+    "devanshu.de@somaiya.edu",
     "smitasankhe@somaiya.edu",
     "vaibhav.vasani@somaiya.edu",
     "swapnil.cp@somaiya.edu",
   ];
-  // Handles Google OAuth for both Student and Validator
+  const DEPT_COORDINATORS = ["swapnil.cp@somaiya.edu","devanshu.de@somaiya.edu"];
+  const INSTI_COORDINATORS = ["smitasankhe@somaiya.edu","devanshu.des@somaiya.edu"];
+  const HOD_EMAILS = ["devanshu.dev@somaiya.edu"];
+  const PRINCIPAL_EMAILS = ["principal.kjsce@somaiya.edu","devanshu.d@somaiya.edu"];
+
   const handleGoogleSuccess = (credentialResponse, role = "Student") => {
     const setError = role === "Validator" ? setValidatorError : setStudentError;
     setError("");
+    
+
     try {
       if (!credentialResponse.credential) {
         setError("Google login failed: No credential received.");
         alert("Google login failed: No credential received.");
         return;
       }
-      let decoded;
-      try {
-        decoded = jwtDecode(credentialResponse.credential);
-        console.log("Decoded Google JWT:", decoded);
-      } catch (decodeErr) {
-        setError("Google login failed: Unable to decode token.");
-        alert("Google login failed: Unable to decode token.");
-        console.error("JWT decode error:", decodeErr);
-        return;
-      }
 
-      if (!decoded.email) {
-        setError("Google login failed: Email not found in token.");
-        alert("Google login failed: Email not found in token.");
-        console.error("Decoded JWT missing email:", decoded);
-        return;
-      }
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log("Decoded Google JWT:", decoded);
 
-      if (!decoded.email.endsWith("@somaiya.edu")) {
+      if (!decoded.email || !decoded.email.endsWith("@somaiya.edu")) {
         setError("Access denied: Only somaiya.edu emails are allowed.");
         alert("Access denied: Only somaiya.edu emails are allowed.");
         return;
       }
 
       let userRole = role;
-      if(decoded.email=="sdc-kjsce@somaiya.edu"){
-        userRole = "Admin";
-      }
-      else if ( role === "Validator" ) {
-        if (!VALIDATOR_EMAILS.includes(decoded.email)) {
-          setError("Access denied: You are not authorized as a Validator.");
-          alert("Access denied: You are not authorized as a Validator.");
-          return;
+
+      if (role === "Validator") {
+        let matchedRoles = [];
+
+        if (decoded.email === "sdc-kjsce@somaiya.edu") {
+          matchedRoles = ["Admin"];
+        } else {
+          if (VALIDATOR_EMAILS.includes(decoded.email)) matchedRoles.push("Validator");
+          if (DEPT_COORDINATORS.includes(decoded.email)) matchedRoles.push("Department Coordinator");
+          if (INSTI_COORDINATORS.includes(decoded.email)) matchedRoles.push("Institute Coordinator");
+          if (HOD_EMAILS.includes(decoded.email)) matchedRoles.push("HOD");
+          if (PRINCIPAL_EMAILS.includes(decoded.email)) matchedRoles.push("Principal");
         }
-        userRole = "Validator";
+
+        if (matchedRoles.length === 0) {
+          setError("Access denied: You are not authorized.");
+          alert("Access denied: You are not authorized.");
+          return;
+        } else if (matchedRoles.length === 1) {
+          userRole = matchedRoles[0];
+        } else {
+          const options = matchedRoles.map((r, i) => `${i + 1}. ${r}`).join("\n");
+          const choice = prompt(`You have multiple roles:\n${options}\n\nEnter the number for your role:`);
+          const index = parseInt(choice, 10) - 1;
+
+          if (!isNaN(index) && index >= 0 && index < matchedRoles.length) {
+            userRole = matchedRoles[index];
+          } else {
+            alert("Multiple roles detected. Please contact admin to resolve ambiguity.");
+            return;
+          }
+        }
       }
+
+      // No need for special student email check — any @somaiya.edu is allowed
 
       localStorage.setItem("svvNetId", decoded.email);
       localStorage.setItem("user", JSON.stringify({ svvNetId: decoded.email, role: userRole }));
 
-      // Redirect based on role
-      if (userRole === "Admin") {
-        navigate("/AdHome");
-      }
-     else  if (userRole === "Validator") {
-        navigate("/facHome");
-      } else {
-        navigate("/home");
+      // Redirect
+      switch (userRole) {
+        case "Admin":
+          navigate("/AdHome");
+          break;
+        case "Validator":
+          navigate("/facHome");
+          break;
+        case "Department Coordinator":
+          navigate("/deptcoordHome");
+          break;
+        case "Institute Coordinator":
+          navigate("/insticoordHome");
+          break;
+        case "HOD":
+          navigate("/hodHome");
+          break;
+        case "Principal":
+          navigate("/principalHome");
+          break;
+        case "Student":
+          navigate("/home");
+          break;
+        default:
+          alert("No matching route for this role.");
       }
     } catch (err) {
       console.error("Google login error:", err);
@@ -118,26 +151,24 @@ const Login = () => {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <div className="login-page">
-        {/* Navbar */}
         <div className="navbar">
           <img src={logo} alt="Somaiya Logo" className="navbar-logo" />
           <h1 className="navbar-title">Welcome to Student Development Cell</h1>
           <img src={logo1} alt="Somaiya Trust Logo" className="navbar-logo1" />
         </div>
 
-        {/* Login Container */}
         <div className="login-container">
-          {/* Validator Box */}
+          {/* Validator Section */}
           <div className="validator-box">
             <h1 className="validator-title">
               <span className="highlight">Student</span> <br />
               <span className="highlight">Development Cell</span>
             </h1>
             <p className="description">
-              The Student Development Policy at K. J. Somaiya College of Engineering reflects our 
+              The Student Development Policy at K. J. Somaiya College of Engineering reflects our
               commitment to fostering a dynamic and enriching academic environment for students across all levels of study.
             </p>
-            <h2 className="validator-question">Validator ?</h2>
+            <h2 className="validator-question">Faculty / Coordinator / HOD?</h2>
             <p className="validator-login-text">Login to go on Dashboard</p>
             {validatorError && <p className="error-message">{validatorError}</p>}
             <GoogleLogin
@@ -184,6 +215,7 @@ const Login = () => {
 
               <button type="submit" className="login-button">Login</button>
             </form>
+
             <h1 className="or">OR</h1>
             <GoogleLogin
               onSuccess={(credentialResponse) => handleGoogleSuccess(credentialResponse, "Student")}

@@ -8,7 +8,7 @@ const AcceeptedApplications = () => {
   const [apps, setApps] = useState([]);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("approvedApps")) || [];
+    const stored = JSON.parse(localStorage.getItem("approveApps")) || [];
     setApps(stored);
   }, []);
 

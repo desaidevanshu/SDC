@@ -21,6 +21,10 @@ import FacRejectedApplications from "./pages/facRejectedApplication";
 import FacAcceptedApplications from "./pages/facApproveApplication";
 import AcceptedApplications from "./pages/AcceptedApplications";
 import RejectedApplications from "./pages/RejectedApplications";
+import HodDashboard from "./pages/Hod";
+import DeptCoordDashboard from "./pages/DepartmentCoordinator";
+import PrincipalDash from "./pages/Principal";
+import InstCoordDash from "./pages/InstituteCoordinator";
 
 import "./style.css";
 
@@ -49,6 +53,10 @@ const App = () => {
         <Route path="/facaccepted" element={<FacAcceptedApplications />} />
         <Route path="/accepted" element={<AcceptedApplications />} />
         <Route path="/rejected" element={<RejectedApplications />} />
+        <Route path="/hodHome" element={<HodDashboard />} />
+        <Route path="/deptcoordHome" element={<DeptCoordDashboard />} />
+        <Route path="/principalHome" element={<PrincipalDash />} />
+        <Route path="/insticoordHome" element={<InstCoordDash />} />
         </Routes>
     </Router>
   );

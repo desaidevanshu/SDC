@@ -7,7 +7,7 @@ const FacAcceptedApplications = () => {
   const [approved, setApproved] = useState([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("approvedApps")) || [];
+    const data = JSON.parse(localStorage.getItem("approveApps")) || [];
     setApproved(data);
   }, []);
 
