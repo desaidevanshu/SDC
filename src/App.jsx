@@ -25,6 +25,7 @@ import HodDashboard from "./pages/Hod";
 import DeptCoordDashboard from "./pages/DepartmentCoordinator";
 import PrincipalDash from "./pages/Principal";
 import InstCoordDash from "./pages/InstituteCoordinator";
+import AdminDashboard from "./pages/Admin";
 
 import "./style.css";
 
@@ -57,6 +58,7 @@ const App = () => {
         <Route path="/deptcoordHome" element={<DeptCoordDashboard />} />
         <Route path="/principalHome" element={<PrincipalDash />} />
         <Route path="/insticoordHome" element={<InstCoordDash />} />
+        <Route path="/AdHome" element={<AdminDashboard />} />
         </Routes>
     </Router>
   );
