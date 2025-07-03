@@ -37,21 +37,21 @@ const Login = () => {
     }
   };
 
+  // Hardcoded role support
   const VALIDATOR_EMAILS = [
     "devanshu.de@somaiya.edu",
     "smitasankhe@somaiya.edu",
     "vaibhav.vasani@somaiya.edu",
     "swapnil.cp@somaiya.edu",
   ];
-  const DEPT_COORDINATORS = ["swapnil.cp@somaiya.edu","devanshu.de@somaiya.edu"];
-  const INSTI_COORDINATORS = ["smitasankhe@somaiya.edu","devanshu.des@somaiya.edu"];
+  const DEPT_COORDINATORS = ["swapnil.cp@somaiya.edu", "devanshu.de@somaiya.edu"];
+  const INSTI_COORDINATORS = ["smitasankhe@somaiya.edu", "devanshu.des@somaiya.edu"];
   const HOD_EMAILS = ["devanshu.dev@somaiya.edu"];
-  const PRINCIPAL_EMAILS = ["principal.kjsce@somaiya.edu","devanshu.desa@somaiya.edu"];
+  const PRINCIPAL_EMAILS = ["principal.kjsce@somaiya.edu", "devanshu.desa@somaiya.edu"];
 
   const handleGoogleSuccess = (credentialResponse, role = "Student") => {
     const setError = role === "Validator" ? setValidatorError : setStudentError;
     setError("");
-    
 
     try {
       if (!credentialResponse.credential) {
@@ -74,14 +74,23 @@ const Login = () => {
       if (role === "Validator") {
         let matchedRoles = [];
 
+        // Admin override
         if (decoded.email === "sdc-kjsce@somaiya.edu" || decoded.email === "devanshu.d@somaiya.edu") {
           matchedRoles = ["Admin"];
         } else {
+          // Hardcoded role checks
           if (VALIDATOR_EMAILS.includes(decoded.email)) matchedRoles.push("Validator");
           if (DEPT_COORDINATORS.includes(decoded.email)) matchedRoles.push("Department Coordinator");
           if (INSTI_COORDINATORS.includes(decoded.email)) matchedRoles.push("Institute Coordinator");
           if (HOD_EMAILS.includes(decoded.email)) matchedRoles.push("HOD");
           if (PRINCIPAL_EMAILS.includes(decoded.email)) matchedRoles.push("Principal");
+
+          // Dynamic check from Admin panel additions
+          const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
+          const matchedUser = storedUsers.find((u) => u.email === decoded.email);
+          if (matchedUser && matchedUser.role && !matchedRoles.includes(matchedUser.role)) {
+            matchedRoles.push(matchedUser.role);
+          }
         }
 
         if (matchedRoles.length === 0) {
@@ -104,12 +113,9 @@ const Login = () => {
         }
       }
 
-      // No need for special student email check — any @somaiya.edu is allowed
-
       localStorage.setItem("svvNetId", decoded.email);
       localStorage.setItem("user", JSON.stringify({ svvNetId: decoded.email, role: userRole }));
 
-      // Redirect
       switch (userRole) {
         case "Admin":
           navigate("/AdHome");

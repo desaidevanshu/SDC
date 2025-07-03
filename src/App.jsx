@@ -26,6 +26,7 @@ import DeptCoordDashboard from "./pages/DepartmentCoordinator";
 import PrincipalDash from "./pages/Principal";
 import InstCoordDash from "./pages/InstituteCoordinator";
 import AdminDashboard from "./pages/Admin";
+import AddUser from "./pages/AddUser";
 
 import "./style.css";
 
@@ -59,6 +60,7 @@ const App = () => {
         <Route path="/principalHome" element={<PrincipalDash />} />
         <Route path="/insticoordHome" element={<InstCoordDash />} />
         <Route path="/AdHome" element={<AdminDashboard />} />
+        <Route path="/adduser" element={<AddUser />} />
         </Routes>
     </Router>
   );

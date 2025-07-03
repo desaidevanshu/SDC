@@ -1,3 +1,4 @@
+// Navbar.js
 import React from "react";
 import { Link, useLocation } from "react-router-dom"; 
 import "../style.css";
@@ -9,10 +10,8 @@ const Navbar = () => {
   const userRole = user?.role || "Student";
   const location = useLocation();
 
-  // Clean display of role (e.g., "Faculty" instead of "Validator")
   let displayRole = userRole === "Validator" ? "Faculty" : userRole;
 
-  // Define dynamic home route based on role
   const roleRoutes = {
     Student: "/home",
     Validator: "/facHome",
@@ -23,7 +22,7 @@ const Navbar = () => {
     Principal: "/principalHome",
   };
 
-  const homeLink = roleRoutes[userRole] || "/home"; // Fallback to student home
+  const homeLink = roleRoutes[userRole] || "/home";
 
   return (
     <nav className="navbar-home">
@@ -33,7 +32,11 @@ const Navbar = () => {
 
       <div className="navbar-center">
         <Link to={homeLink} className="nav-link">Home</Link>
-        <Link to="/dashboard" className="nav-link">Dashboard</Link>
+        {userRole === "Admin" ? (
+          <Link to="/adduser" className="nav-link">Add User</Link>
+        ) : (
+          <Link to="/dashboard" className="nav-link">Dashboard</Link>
+        )}
         <Link to="/policy" className="nav-link">Policy</Link>
         <Link to="/" className="nav-link logout-btn">Logout</Link>
       </div>
