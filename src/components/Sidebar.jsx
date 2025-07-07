@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../style.css";
-import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+
+import { FaClock, FaCheckCircle, FaTimesCircle, FaQuestionCircle, FaEnvelope } from "react-icons/fa";
 
 const Sidebar = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -33,7 +33,7 @@ const Sidebar = () => {
   const rejectedLink = getRoute("Rejected");
 
   return (
-    <div className="sidebar">
+    <div className="sidebar" >
       {/* Logo Section */}
       <div className="logo-container">
         <div className="logo-box">
@@ -71,9 +71,19 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <Link to="/faqs" className="nav-item">FAQ's</Link>
-        <br />
-        <Link to="/contact" className="nav-item">Contact Us</Link>
+        {/* Support Section */}
+        <div className="support-section">
+          <div className="status-item">
+            <Link to="/faqs">
+              <FaQuestionCircle className="status-icon" /> FAQ's
+            </Link>
+          </div>
+          <div className="status-item">
+            <Link to="/contact">
+              <FaEnvelope className="status-icon" /> Contact Us
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
