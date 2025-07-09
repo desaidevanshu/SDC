@@ -1,16 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-import { FaClock, FaCheckCircle, FaTimesCircle, FaQuestionCircle, FaEnvelope } from "react-icons/fa";
+import { FaClock, FaCheckCircle, FaTimesCircle, FaQuestionCircle, FaEnvelope, FaBars, FaTimes } from "react-icons/fa";
+import "../pages/Sidebar.css";
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const closeSidebar = () => setIsOpen(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      // Auto-close sidebar when resizing to mobile if it was open
+      if (window.innerWidth <= 768 && isOpen) {
+        closeSidebar();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
+
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || "Applicant";
-
-  // Set portal label
   const portalLabel = `${role} Portal`;
 
-  // Set role-based routing
   const getRoute = (type) => {
     switch (role) {
       case "Validator":
@@ -24,7 +40,7 @@ const Sidebar = () => {
       case "Principal":
         return `/principal${type}`;
       default:
-        return `/${type.toLowerCase()}`; // fallback for Student or unknown roles
+        return `/${type.toLowerCase()}`;
     }
   };
 
@@ -33,59 +49,80 @@ const Sidebar = () => {
   const rejectedLink = getRoute("Rejected");
 
   return (
-    <div className="sidebar" >
-      {/* Logo Section */}
-      <div className="logo-container">
-        <div className="logo-box">
-          <h2>
-            {portalLabel.split(" ")[0]} <br /> {portalLabel.split(" ")[1]}
-          </h2>
-          <p>Somaiya Vidyavihar University</p>
+    <>
+      {/* Mobile Toggle Button - outside sidebar */}
+      {isMobile && (
+        <button 
+          className={`mobile-toggle ${isOpen ? "open" : ""}`}
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+        >
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      )}
+
+      <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* Desktop Toggle Button - inside sidebar */}
+        {!isMobile && (
+          <button 
+            className="desktop-toggle"
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+          >
+            {isOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        )}
+
+        {/* Logo Section */}
+        <div className="sidebar-header">
+          <div className="logo-box">
+            <h2>
+              {portalLabel.split(" ")[0]} <br /> {portalLabel.split(" ")[1]}
+            </h2>
+            <p>Somaiya Vidyavihar University</p>
+          </div>
+        </div>
+
+        {/* Sidebar Options */}
+        <div className="sidebar-links">
+          <div className="sidebar-section">
+            <h3>Application Forms</h3>
+          </div>
+
+          <div className="sidebar-section">
+            <h3>Application Status</h3>
+            <div className="status-list">
+              <Link to={pendingLink} className="status-item" onClick={closeSidebar}>
+                <FaClock className="status-icon" /> Pending
+              </Link>
+              <Link to={acceptedLink} className="status-item" onClick={closeSidebar}>
+                <FaCheckCircle className="status-icon" /> Accepted
+              </Link>
+              <Link to={rejectedLink} className="status-item" onClick={closeSidebar}>
+                <FaTimesCircle className="status-icon" /> Rejected
+              </Link>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3>Support</h3>
+            <div className="status-list">
+              <Link to="/faqs" className="status-item" onClick={closeSidebar}>
+                <FaQuestionCircle className="status-icon" /> FAQ's
+              </Link>
+              <Link to="/contact" className="status-item" onClick={closeSidebar}>
+                <FaEnvelope className="status-icon" /> Contact Us
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Sidebar Options */}
-      <div className="sidebar-links">
-        <p>Application Forms</p>
-
-        {/* Application Status Section */}
-        <div className="status-section">
-          <p>Application Status</p>
-
-          <div className="status-item">
-            <Link to={pendingLink}>
-              <FaClock className="status-icon" /> Pending
-            </Link>
-          </div>
-
-          <div className="status-item">
-            <Link to={acceptedLink}>
-              <FaCheckCircle className="status-icon" /> Accepted
-            </Link>
-          </div>
-
-          <div className="status-item">
-            <Link to={rejectedLink}>
-              <FaTimesCircle className="status-icon" /> Rejected
-            </Link>
-          </div>
-        </div>
-
-        {/* Support Section */}
-        <div className="support-section">
-          <div className="status-item">
-            <Link to="/faqs">
-              <FaQuestionCircle className="status-icon" /> FAQ's
-            </Link>
-          </div>
-          <div className="status-item">
-            <Link to="/contact">
-              <FaEnvelope className="status-icon" /> Contact Us
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* Overlay for mobile */}
+      {isMobile && isOpen && (
+        <div className="sidebar-overlay" onClick={closeSidebar} />
+      )}
+    </>
   );
 };
 
