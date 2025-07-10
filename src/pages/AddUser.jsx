@@ -8,6 +8,7 @@ const AddUser = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("Validator");
   const [users, setUsers] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
@@ -21,7 +22,11 @@ const AddUser = () => {
 
   const handleAddUser = () => {
     if (!email.endsWith("@somaiya.edu")) {
-      alert("Only somaiya.edu emails allowed");
+      setError("Only somaiya.edu emails allowed");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -30,22 +35,39 @@ const AddUser = () => {
     saveUsers(updatedUsers);
     setEmail("");
     setPassword("");
-    setRole("Student");
-    alert("User added successfully!");
+    setRole("Validator");
+    setError("");
   };
 
   const handleDelete = (index) => {
-    const updated = users.filter((_, i) => i !== index);
-    saveUsers(updated);
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      const updated = users.filter((_, i) => i !== index);
+      saveUsers(updated);
+    }
   };
 
   const handleEdit = (index) => {
     const newEmail = prompt("Enter new email", users[index].email);
+    if (newEmail && !newEmail.endsWith("@somaiya.edu")) {
+      alert("Only somaiya.edu emails allowed");
+      return;
+    }
+    
     const newPassword = prompt("Enter new password", users[index].password);
+    if (newPassword && newPassword.length < 8) {
+      alert("Password must be at least 8 characters");
+      return;
+    }
+    
     const newRole = prompt("Enter new role", users[index].role);
+    
     if (newEmail && newPassword && newRole) {
       const updated = [...users];
-      updated[index] = { email: newEmail, password: newPassword, role: newRole };
+      updated[index] = { 
+        email: newEmail, 
+        password: newPassword, 
+        role: newRole 
+      };
       saveUsers(updated);
     }
   };
@@ -55,59 +77,112 @@ const AddUser = () => {
       <Sidebar />
       <div className="main-content">
         <Navbar />
-        <div className="add-user-page" style={{ paddingTop: "5rem" }}>
-          <h2>Add New User</h2>
-          <div className="add-user-form">
-            <input
-              type="email"
-              placeholder="Enter somaiya email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              
-              <option>Validator</option>
-              <option>Department Coordinator</option>
-              <option>Institute Coordinator</option>
-              <option>HOD</option>
-              <option>Principal</option>
-              <option>Admin</option>
-            </select>
-            <button onClick={handleAddUser}>Add User</button>
+        <div className="add-user-container">
+          <div className="add-user-card">
+            <h2 className="add-user-title">Add New User</h2>
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="user@somaiya.edu"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
+                className="form-input"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                className="form-input"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Role</label>
+              <select 
+                value={role} 
+                onChange={(e) => setRole(e.target.value)}
+                className="form-select"
+              >
+                <option value="Validator">Validator</option>
+                <option value="Department Coordinator">Department Coordinator</option>
+                <option value="Institute Coordinator">Institute Coordinator</option>
+                <option value="HOD">HOD</option>
+                <option value="Principal">Principal</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+            
+            <button 
+              className="submit-button"
+              onClick={handleAddUser}
+            >
+              Add User
+            </button>
           </div>
 
-          <h3>Current Users</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u, i) => (
-                <tr key={i}>
-                  <td>{u.email}</td>
-                  <td>{u.password}</td>
-                  <td>{u.role}</td>
-                  <td>
-                    <button onClick={() => handleEdit(i)}>Edit</button>
-                    <button onClick={() => handleDelete(i)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="users-table-container">
+            <h3 className="users-title">Current Users</h3>
+            {users.length > 0 ? (
+              <div className="table-wrapper">
+                <table className="users-table">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Password</th>
+                      <th>Role</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u, i) => (
+                      <tr key={i}>
+                        <td className="email-cell">{u.email}</td>
+                        <td className="password-cell">{"•".repeat(u.password.length)}</td>
+                        <td>
+                          <span className={`role-badge ${u.role.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="actions-cell">
+                          <button 
+                            className="action-btn edit-btn"
+                            onClick={() => handleEdit(i)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="action-btn delete-btn"
+                            onClick={() => handleDelete(i)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="no-users">No users added yet</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

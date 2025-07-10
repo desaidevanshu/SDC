@@ -10,62 +10,63 @@ import logo1 from "../assets/trust.png";
 const GOOGLE_CLIENT_ID = "653938123906-1qpf6dbs0u51auibm3lrmu3sg7a0gamh.apps.googleusercontent.com";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [studentError, setStudentError] = useState("");
-  const [validatorError, setValidatorError] = useState("");
-  const [valEmail, setValEmail] = useState("");
-  const [valPass, setValPass] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
+  // Hardcoded users for demo purposes
   const hardcodedUsers = {
-    "devanshu.d": "Devanshu123",
-    "sohamgore": "12345678",
+    // Students
+    "devanshu.d@somaiya.edu": { password: "Devanshu123", role: "Student" },
+    "sohamgore@somaiya.edu": { password: "12345678", role: "Student" },
+    // Admin
+    "sdc-kjsce@somaiya.edu": { password: "admin123", role: "Admin" },
+    "devanshu.dee@somaiya.edu": { password: "admin123", role: "Admin" },
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setStudentError("");
+    setError("");
 
-    if (hardcodedUsers[username] === password) {
-      localStorage.setItem("svvNetId", username);
-      localStorage.setItem("user", JSON.stringify({ svvNetId: username, role: "Student" }));
-      navigate("/home");
+    // Check hardcoded users first
+    if (hardcodedUsers[email] && hardcodedUsers[email].password === password) {
+      const user = hardcodedUsers[email];
+      completeLogin(email, user.role);
+      return;
+    }
+
+    // Check stored users
+    const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
+    const foundUser = storedUsers.find(u => u.email === email && u.password === password);
+
+    if (foundUser) {
+      completeLogin(email, foundUser.role);
     } else {
-      setStudentError("Invalid credentials!");
+      setError("Invalid credentials!");
       alert("Invalid credentials!");
     }
   };
 
-  const handleValidatorLogin = (e) => {
-    e.preventDefault();
-    setValidatorError("");
+  const completeLogin = (email, role) => {
+    localStorage.setItem("svvNetId", email);
+    localStorage.setItem("user", JSON.stringify({ svvNetId: email, role }));
 
-    const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
-    const foundUser = storedUsers.find(u => u.email === valEmail && u.password === valPass);
-
-    if (foundUser) {
-      localStorage.setItem("svvNetId", valEmail);
-      localStorage.setItem("user", JSON.stringify({ svvNetId: valEmail, role: foundUser.role }));
-
-      switch (foundUser.role) {
-        case "Admin": navigate("/AdHome"); break;
-        case "Validator": navigate("/facHome"); break;
-        case "Department Coordinator": navigate("/deptcoordHome"); break;
-        case "Institute Coordinator": navigate("/insticoordHome"); break;
-        case "HOD": navigate("/hodHome"); break;
-        case "Principal": navigate("/principalHome"); break;
-        default: navigate("/home");
-      }
-    } else {
-      setValidatorError("Invalid validator credentials!");
-      alert("Invalid validator credentials!");
+    // Navigate based on role
+    switch (role) {
+      case "Admin": navigate("/AdHome"); break;
+      case "Validator": navigate("/facHome"); break;
+      case "Department Coordinator": navigate("/deptcoordHome"); break;
+      case "Institute Coordinator": navigate("/insticoordHome"); break;
+      case "HOD": navigate("/hodHome"); break;
+      case "Principal": navigate("/principalHome"); break;
+      case "Student": navigate("/home"); break;
+      default: navigate("/home");
     }
   };
 
-  const handleGoogleSuccess = (credentialResponse, role = "Student") => {
-    const setError = role === "Validator" ? setValidatorError : setStudentError;
+  const handleGoogleSuccess = (credentialResponse) => {
     setError("");
 
     try {
@@ -83,54 +84,25 @@ const Login = () => {
         return;
       }
 
-      let userRole = role;
+      // Check if user exists in hardcoded or stored users
+      let userRole = "Student"; // Default role
 
-      if (role === "Validator") {
-        let matchedRoles = [];
-
-        if (decoded.email === "sdc-kjsce@somaiya.edu" || decoded.email === "devanshu.d@somaiya.edu") {
-          matchedRoles = ["Admin"];
-        } else {
-          const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
-          const matchedUser = storedUsers.find((u) => u.email === decoded.email);
-          if (matchedUser && matchedUser.role) {
-            matchedRoles.push(matchedUser.role);
-          }
-        }
-
-        if (matchedRoles.length === 0) {
-          setError("Access denied: You are not authorized.");
-          alert("Access denied: You are not authorized.");
-          return;
-        } else if (matchedRoles.length === 1) {
-          userRole = matchedRoles[0];
-        } else {
-          const options = matchedRoles.map((r, i) => `${i + 1}. ${r}`).join("\n");
-          const choice = prompt(`You have multiple roles:\n${options}\n\nEnter the number for your role:`);
-          const index = parseInt(choice, 10) - 1;
-
-          if (!isNaN(index) && index >= 0 && index < matchedRoles.length) {
-            userRole = matchedRoles[index];
-          } else {
-            alert("Multiple roles detected. Please contact admin to resolve ambiguity.");
-            return;
-          }
+      if (hardcodedUsers[decoded.email]) {
+        userRole = hardcodedUsers[decoded.email].role;
+      } else {
+        const storedUsers = JSON.parse(localStorage.getItem("userList")) || [];
+        const matchedUser = storedUsers.find((u) => u.email === decoded.email);
+        if (matchedUser && matchedUser.role) {
+          userRole = matchedUser.role;
         }
       }
 
-      localStorage.setItem("svvNetId", decoded.email);
-      localStorage.setItem("user", JSON.stringify({ svvNetId: decoded.email, role: userRole }));
-
-      switch (userRole) {
-        case "Admin": navigate("/AdHome"); break;
-        case "Validator": navigate("/facHome"); break;
-        case "Department Coordinator": navigate("/deptcoordHome"); break;
-        case "Institute Coordinator": navigate("/insticoordHome"); break;
-        case "HOD": navigate("/hodHome"); break;
-        case "Principal": navigate("/principalHome"); break;
-        case "Student": navigate("/home"); break;
-        default: alert("No matching route for this role.");
+      // Special cases for admin
+      if (decoded.email === "sdc-kjsce@somaiya.edu" || decoded.email === "devanshu.d@somaiya.edu") {
+        userRole = "Admin";
       }
+
+      completeLogin(decoded.email, userRole);
     } catch (err) {
       console.error("Google login error:", err);
       setError("Google login failed: Invalid token.");
@@ -138,8 +110,7 @@ const Login = () => {
     }
   };
 
-  const handleGoogleError = (role = "Student") => {
-    const setError = role === "Validator" ? setValidatorError : setStudentError;
+  const handleGoogleError = () => {
     setError("Google login failed. Please try again.");
     alert("Google login failed. Please try again.");
   };
@@ -154,10 +125,9 @@ const Login = () => {
         </div>
 
         <div className="login-container">
-          {/* Validator Box */}
-          <div className="validator-box">
-            <h1 className="validator-title">
-              <span className="highlight">Student</span><br />
+          <div className="login-box">
+            <h1 className="login-title">
+              <span className="highlight">Student</span>
               <span className="highlight">Development Cell</span>
             </h1>
             <p className="description">
@@ -165,62 +135,24 @@ const Login = () => {
               commitment to fostering a dynamic and enriching academic environment for students across all levels of study.
             </p>
 
-            <h2 className="validator-question">Faculty / Coordinator / HOD?</h2>
-            <p className="validator-login-text">Login with Email & Password</p>
+            <h2 className="login-question">Login to your account</h2>
 
-            <form onSubmit={handleValidatorLogin} className="login-form">
+            <form onSubmit={handleLogin} className="login-form">
+              <label>Email *</label>
               <input
                 type="email"
                 className="login-input"
-                placeholder="Enter somaiya email"
-                value={valEmail}
-                onChange={(e) => setValEmail(e.target.value)}
+                placeholder="Enter your somaiya.edu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
+
+              <label>Password *</label>
               <input
                 type="password"
                 className="login-input"
-                placeholder="Enter password"
-                value={valPass}
-                onChange={(e) => setValPass(e.target.value)}
-                required
-              />
-              {validatorError && <p className="error-message">{validatorError}</p>}
-              <button type="submit" className="login-button-val">Login</button>
-            </form>
-
-            <h1 className="or">OR</h1>
-
-            <GoogleLogin
-              onSuccess={(credentialResponse) => handleGoogleSuccess(credentialResponse, "Validator")}
-              onError={() => handleGoogleError("Validator")}
-              width="100%"
-              text="signin_with"
-              shape="pill"
-              logo_alignment="left"
-              useOneTap
-            />
-          </div>
-
-          {/* Student Login Box */}
-          <div className="student-login-box">
-            <h2 className="form-title">Please enter your SVV Net ID & password to Login.</h2>
-            <form className="login-form" onSubmit={handleLogin}>
-              <label>SVV Net ID *</label>
-              <input
-                type="text"
-                placeholder="Enter your SVV Net ID"
-                className="login-input"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-
-              <label>Password:</label>
-              <input
-                type="password"
                 placeholder="Enter your password"
-                className="login-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -231,15 +163,18 @@ const Login = () => {
                 <label htmlFor="remember">Remember me</label>
               </div>
 
-              {studentError && <p className="error-message">{studentError}</p>}
+              {error && <p className="error-message">{error}</p>}
 
               <button type="submit" className="login-button">Login</button>
             </form>
 
-            <h1 className="or">OR</h1>
+            <div className="or">
+              <span className="or-text">OR</span>
+            </div>
+
             <GoogleLogin
-              onSuccess={(credentialResponse) => handleGoogleSuccess(credentialResponse, "Student")}
-              onError={() => handleGoogleError("Student")}
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
               width="100%"
               text="signin_with"
               shape="pill"
